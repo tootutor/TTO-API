@@ -97,7 +97,7 @@ class Test
   }
 
 	/**
-	 * @url GET something/{id}
+	 * @url GET /something/{id}
 	 */
 	protected function getSomething($id)
   {
@@ -108,7 +108,7 @@ class Test
   }
 
 	/**
-	 * @url POST something
+	 * @url POST /something
 	 */
 	protected function postSomething($data)
   {
@@ -119,7 +119,7 @@ class Test
   }
 
 	/**
-	 * @url PUT something/{id}
+	 * @url PUT /something/{id}
 	 */
 	protected function putSomething($id, $data)
   {
@@ -131,7 +131,7 @@ class Test
   }
 
 	/**
-	 * @url DELETE something/{id}
+	 * @url DELETE /something/{id}
 	 */
 	protected function deleteSomething($id)
   {
