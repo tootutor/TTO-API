@@ -35,6 +35,7 @@ class Auth implements iAuthenticate
 
 	/**  
    * @url POST login
+   * @url POST
    */ 
   function postLogin($email, $password)
   {
@@ -99,4 +100,24 @@ class Auth implements iAuthenticate
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
   }
+
+	/**
+	 * @url DELETE
+	 */ 
+  protected function deleteAuth($userId)
+  {
+  	if ($userId == \TTO::getUserId()) {
+			//update token to db
+			$statement = 'UPDATE user SET token = :token WHERE userId = :userId';
+			$bind = array ('token' => '', 'userId' => $userId);
+	    $count = \Db::execute($statement, $bind);
+	  	//then return token
+	  	$response = new \stdClass();
+	  	$response->count = $count;
+	  	return $response;
+  	} else {
+  		throw new RestException(401, 'No Authorize or Invalid request !!!');
+  	}
+  }
+	
 }
