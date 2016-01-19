@@ -97,7 +97,7 @@ class Test
   }
 
 	/**
-	 * @url GET /something
+	 * @url GET something
 	 */
 	protected function getSomethingAll()
   {
@@ -108,7 +108,7 @@ class Test
   }
 
  	/**
-	 * @url GET /something/{id}
+	 * @url GET something/{id}
 	 */
 	protected function getSomething($id)
   {

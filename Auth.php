@@ -34,10 +34,9 @@ class Auth implements iAuthenticate
   }
 
 	/**  
-   * @url POST login
    * @url POST
    */ 
-  function postLogin($email, $password)
+	function postAuth($email, $password)
   {
   	//validate email and password
   	$statement = 'SELECT userId, hash, role, nickname, notificationCount, avatarId FROM user where email = :email';
@@ -68,9 +67,9 @@ class Auth implements iAuthenticate
   }
 
 	/**  
-   * @url GET current/{userId}
+   * @url GET {userId}
    */ 
-  protected function getCurrent($userId) 
+  protected function getAuth($userId) 
   {
   	if ($userId == \TTO::getUserId()) {
 	  	$response = new \stdClass();
@@ -82,27 +81,23 @@ class Auth implements iAuthenticate
   	}
   }
 
-	/**
-	 * @url POST logout
-	 */ 
-  protected function postLogout($userId)
+	/**  
+   * @url PUT {userId}
+   */ 
+	protected function putAuth($userId, $serial) 
   {
   	if ($userId == \TTO::getUserId()) {
-			//update token to db
-			$statement = 'UPDATE user SET token = :token WHERE userId = :userId';
-			$bind = array ('token' => '', 'userId' => $userId);
-	    $count = \Db::execute($statement, $bind);
-	  	//then return token
 	  	$response = new \stdClass();
-	  	$response->count = $count;
-	  	return $response;
+	  	$response->userId = \TTO::getUserId();
+			$response->token  = \TTO::getToken();
+			return $response;
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
   }
-
+	
 	/**
-	 * @url DELETE
+	 * @url DELETE {userId}
 	 */ 
   protected function deleteAuth($userId)
   {
@@ -119,5 +114,5 @@ class Auth implements iAuthenticate
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
   }
-	
+
 }
