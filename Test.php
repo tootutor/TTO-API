@@ -97,6 +97,17 @@ class Test
   }
 
 	/**
+	 * @url GET /something
+	 */
+	protected function getSomethingAll()
+  {
+  	$response = new \stdClass();
+  	$response->action = 'GET';
+  	$response->data = [{id: 1, date:'DATA1'}, {id: 2, date:'DATA2'}, {id: 3, date:'DATA3'}];
+  	return $response;
+  }
+
+ 	/**
 	 * @url GET /something/{id}
 	 */
 	protected function getSomething($id)
@@ -121,12 +132,13 @@ class Test
 	/**
 	 * @url PUT /something/{id}
 	 */
-	protected function putSomething($id, $data)
+	protected function putSomething($id, $data, $detail2)
   {
   	$response = new \stdClass();
   	$response->action = 'PUT';
   	$response->id = $id;
   	$response->data = $data;
+  	$response->detail2 = $detail2;
   	return $response;
   }
 
