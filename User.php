@@ -5,6 +5,7 @@ class User
 {
 	/**
 	 * @url POST register
+	 * @url POST
 	 */ 
 	function postRegister(
 				$email, $password, $firstname, $lastname, $nickname, $phone, $birthdate, $school, $province, $level, $purpose, $avatarId)
@@ -51,11 +52,15 @@ class User
 
 	/**  
    * @url GET profile/{userId}
+   * @url GET {userId}
    */ 
   protected function getProfile($userId)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
-	  	$statement = 'SELECT * FROM user WHERE userId = :userId';
+	  	$statement = '
+        SELECT firstname, lastname, nickname, phone, birthdate, school, province, level, purpose, avatarId, coin, point
+        FROM user WHERE userId = :userId
+      ';
 	  	$bind = array('userId' => $userId);
 			return \Db::getRow($statement, $bind);
   	} else {
@@ -65,6 +70,7 @@ class User
 
 	/**
 	 * @url POST profile/{userId}
+	 * @url PUT {userId}
 	 */ 
   protected function postProfile(
   			$userId, $firstname, $lastname, $nickname, $phone, $birthdate, $school, $province, $level, $purpose, $avatarId)
@@ -110,6 +116,7 @@ class User
 
 	/**  
    * @url GET alluser
+   * @url GET
    */ 
   protected function getAllUser()
   {
