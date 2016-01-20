@@ -43,7 +43,7 @@ Defaults::$crossOriginResourceSharing = true;
 Defaults::$accessControlAllowOrigin = '*';
 
 $r = new Restler();
-//$r->addAPIClass('Test');
+$r->addAPIClass('Test');
 $r->addAPIClass('Explorer');
 //$r->setAPIVersion(1);
 $r->addAuthenticationClass('Auth');

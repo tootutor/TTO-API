@@ -11,7 +11,7 @@ class Auth implements iAuthenticate
   	if (isset($header['Token']) || isset($header['token'])) {
 	  	$token = $header['Token'] ? $header['Token'] : $header['token'];
 			//Check token against db then hold the token in static class for referncing later	  	
-	  	$statement = 'SELECT userId, token, role, email FROM user WHERE token = :token';
+	  	$statement = 'SELECT userId, token, role, email, serial, status FROM user WHERE token = :token';
 	  	$bind = array('token' => $token);
 			$row = Db::getRow($statement, $bind);
 	  	if ($row['userId'] > 0) {
@@ -19,6 +19,8 @@ class Auth implements iAuthenticate
 	  		\TTO::setToken($row['token']);
 	  		\TTO::setRole($row['role']);
 	  		\TTO::setEmail($row['email']);
+	  		\TTO::setSerial($row['serial']);
+	  		\TTO::setStatus($row['status']);
  				return true;
 	  	} else {
 	  		return false;
@@ -39,7 +41,7 @@ class Auth implements iAuthenticate
 	function postAuth($email, $password)
   {
   	//validate email and password
-  	$statement = 'SELECT userId, hash, role, nickname, notificationCount, avatarId FROM user where email = :email';
+  	$statement = 'SELECT userId, hash, role, nickname, notificationCount, avatarId, status FROM user where email = :email';
   	$bind = array ('email' => $email);
   	$user = \Db::getRow($statement, $bind);
 
@@ -60,6 +62,7 @@ class Auth implements iAuthenticate
 	  	$response->nickname = $user['nickname'];
 	  	$response->notificationCount = $user['notificationCount'];
 	  	$response->avatarId = $user['avatarId'];
+	  	$response->status = $user['status'];
 	  	return $response;
 		} else {
 			throw new RestException(401, 'Invalid email or password !!!');
@@ -84,13 +87,21 @@ class Auth implements iAuthenticate
 	/**  
    * @url PUT {userId}
    */ 
-	protected function putAuth($userId, $serial) 
+	protected function putAuth($userId, $token, $serial) 
   {
   	if ($userId == \TTO::getUserId()) {
-	  	$response = new \stdClass();
-	  	$response->userId = \TTO::getUserId();
-			$response->token  = \TTO::getToken();
-			return $response;
+			//update token to db
+			$statement = 'UPDATE user SET status = :status WHERE token = :token AND userId = :userId';
+			$bind = array ('status' => 'active', 'token' => $token, 'userId' => $userId);
+	    $count = \Db::execute($statement, $bind);
+      //then return result
+      $response = new \stdClass();
+      if ($count > 0) {
+        $response->status = 'active';
+      } else {
+        $response->status = '';
+      }
+      return $response;
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}

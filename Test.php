@@ -71,10 +71,10 @@ class Test
   	}
   }
 
-	/**
-	 * @url POST sendemail
-	 */
-	protected function postSendEmail($from, $to, $subject, $message)
+  /**
+   * @url POST sendemail
+   */
+  protected function postSendEmail($from, $to, $subject, $message)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
   		\TTOMail::createAndSend($from, $to, $subject, $message);
@@ -83,10 +83,10 @@ class Test
   	}
   }
 
-	/**
-	 * @url GET useremail/{userId}
-	 */
-	protected function getUserEmail($userId)
+  /**
+   * @url GET useremail/{userId}
+   */
+  protected function getUserEmail($userId)
   {
   	if (\TTO::getRole() == 'admin') {
 	  	$response = new \stdClass();
@@ -96,32 +96,43 @@ class Test
   	}
   }
 
-	/**
-	 * @url GET something
-	 */
-	protected function getSomethingAll()
+  /**
+   * @url GET something/{id1}/aa
+   */
+  function getSomethingAll($id1)
   {
-  	$response = new \stdClass();
-  	$response->action = 'GET';
-  	$response->data = [{id: 1, date:'DATA1'}, {id: 2, date:'DATA2'}, {id: 3, date:'DATA3'}];
+  	$response = [];
+	$response[0] = new \stdClass();
+	$response[0]->id1 = 11;
+	$response[0]->id2 = 12;
+	$response[0]->data = 'DATA1';
+	$response[1] = new \stdClass();
+	$response[1]->id1 = 21;
+	$response[1]->id2 = 22;
+	$response[1]->data = 'DATA2';
+	$response[2] = new \stdClass();
+	$response[2]->id1 = 31;
+	$response[2]->id2 = 32;
+	$response[2]->data = 'DATA3';
   	return $response;
   }
 
- 	/**
-	 * @url GET something/{id}
-	 */
-	protected function getSomething($id)
+  /**
+   * @url GET something/{id1}/aa/{id2}
+   */
+  function getSomething($id1, $id2)
   {
   	$response = new \stdClass();
   	$response->action = 'GET';
-  	$response->id = $id;
+  	$response->id1 = $id1;
+  	$response->id2 = $id2;
   	return $response;
   }
 
-	/**
-	 * @url POST /something
-	 */
-	protected function postSomething($data)
+  /**
+   * @url POST /something
+   */
+  function postSomething($data)
   {
   	$response = new \stdClass();
   	$response->action = 'POST';
@@ -129,27 +140,28 @@ class Test
   	return $response;
   }
 
-	/**
-	 * @url PUT /something/{id}
-	 */
-	protected function putSomething($id, $data, $detail2)
+  /**
+   * @url PUT /something/{id1}/aa/{id2}
+   */
+  function putSomething($id1, $id2, $data)
   {
   	$response = new \stdClass();
   	$response->action = 'PUT';
-  	$response->id = $id;
+  	$response->id1 = $id1;
+  	$response->id2 = $id2;
   	$response->data = $data;
-  	$response->detail2 = $detail2;
   	return $response;
   }
 
-	/**
-	 * @url DELETE /something/{id}
-	 */
-	protected function deleteSomething($id)
+  /**
+   * @url DELETE /something/{id1}/aa/{id2}
+   */
+  protected function deleteSomething($id1, $id2)
   {
   	$response = new \stdClass();
   	$response->action = 'DELETE';
-  	$response->id = $id;
+  	$response->id1 = $id1;
+  	$response->id2 = $id2;
   	return $response;
   }
 
