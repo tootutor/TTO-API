@@ -1,16 +1,16 @@
 <?php
 use Luracast\Restler\RestException;
 
-class Coin
+class Order
 {
   /**
    * @smart-auto-routing false
    */ 
 
 	/**
-	 * @url POST neworder
+	 * @url POST /order
 	 */
-	protected function postNewOrder($userId, $coin, $bonus, $amount)
+	protected function postOrder($userId, $coin, $bonus, $amount)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 			$statement = "
@@ -43,14 +43,14 @@ class Coin
   }
 
 	/**
-	 * @url GET allorder
+	 * @url GET /order
 	 */
   protected function getAllOrder()
   {
   	if (\TTO::getRole() == 'admin') {
 	  	$statement = '
-	  		SELECT UC.*, U.nickname 
-	  		  FROM coin_order AS UC
+	  		SELECT O.*, U.nickname 
+	  		  FROM order AS O
 	  		 INNER JOIN user AS U
 	  		    ON UC.userId = U.userId
 	  		 ORDER BY status DESC
@@ -62,9 +62,9 @@ class Coin
   }
 
 	/**
-	 * @url GET orderlist/{userId}
+	 * @url GET /user/{userId}/order
 	 */
-  protected function getOrderList($userId)
+  protected function getUserOrder($userId)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 	  	$statement = 'SELECT * FROM coin_order WHERE userId = :userId ORDER BY status DESC';
@@ -76,27 +76,14 @@ class Coin
   }
 
 	/**
-	 * @url GET mycoin/{userId}
-	 */
-  protected function getMyCoin($userId)
-  {
-  	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
-	  	$statement = 'SELECT coin FROM user WHERE userId = :userId';
-	  	$bind = array('userId' => $userId);
-			return \Db::getRow($statement, $bind);
-  	} else {
-  		throw new RestException(401, 'No Authorize or Invalid request !!!');
-  	}
-  }
-
-	/**
-   * @url POST confirmorder/{coinOrderId}
+   * @url PUT /order/{orderId}
+   * @url PUT /user/{userId}/order/{orderId}
    */ 
-  protected function postConfirmOrder($coinOrderId, $userId, $bankId, $transferAmount, $transferDate)
+  protected function putOrder($orderId, $userId, $bankId, $transferAmount, $transferDate)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 	  	$statement = '
-	  		UPDATE coin_order SET 
+	  		UPDATE order SET 
 	  			status         = :status, 
 	  			bankId         = :bankId, 
 	  			transferAmount = :transferAmount,
@@ -104,7 +91,7 @@ class Coin
 	  		WHERE coinOrderId = :coinOrderId
 	  	';
 	  	$bind = array(
-	  		'coinOrderId'    => $coinOrderId, 
+	  		'orderId'    => $orderId, 
 	  		'bankId'         => $bankId, 
 	  		'transferAmount' => $transferAmount,
 	  		'transferDate'   => $transferDate,
@@ -112,24 +99,16 @@ class Coin
 	  	);
 			$count = \Db::execute($statement, $bind);
 
-			\TTOMail::createAndSendAdmin('A user confirmed order', json_encode($bind));
-
-			if ($count > 0) {
-				$statement = 'SELECT * FROM coin_order WHERE coinOrderId = :coinOrderId';
-				$bind = array('coinOrderId' => $coinOrderId);
-				return \Db::getRow($statement, $bind);
-			} else {
-	  		throw new RestException(500, 'Confirm error!!!');
-			}			
+			\TTOMail::createAndSendAdmin('Updated order', json_encode($bind));
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
   }
 
 	/**
-   * @url POST cancelorder/{coinOrderId}
+   * @url DELETE /user/{userId}/order/{orderId}
    */ 
-  protected function postCancelOrder($coinOrderId, $userId)
+  protected function deleteOrder($orderId, $userId)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 	  	$statement = 'DELETE coin_order WHERE coinOrderId = :coinOrderId';
@@ -139,9 +118,7 @@ class Coin
 			\TTOMail::createAndSendAdmin('A user cancelled order', json_encode($bind));
 			
 			if ($count > 0) {
-		  	$response = new \stdClass();
-		  	$response->cancel = $count;
-		  	return $response;
+		  	return;
 			} else {
 	  		throw new RestException(500, 'Cancel Error !!!');
 			}
@@ -151,12 +128,12 @@ class Coin
   }
   
   /**
-   * @url POST approveorder/{coinOrderId}
+   * @url POST /approveorder/{orderId}
    */ 
-  protected function postApproveOrder($coinOrderId, $userId)
+  protected function postApproveOrder($orderId, $userId)
   {
   	if (\TTO::getRole() == 'admin') {
-	  	$statement = 'UPDATE coin_order SET status = :status WHERE coinOrderId = :coinOrderId';
+	  	$statement = 'UPDATE order SET status = :status WHERE coinOrderId = :coinOrderId';
 	  	$bind = array('coinOrderId' => $coinOrderId, 'status' => 'approve');
 			$count = \Db::execute($statement, $bind);
 
@@ -179,11 +156,4 @@ class Coin
   	}
   }
 	
-	protected function getAllPackage() 
-	{
-  	$statement = 'SELECT * FROM coin WHERE status = :status ORDER BY amount';
-  	$bind = array('status' => 'active');
-		return \Db::getResult($statement, $bind);
-	}
 }
-
