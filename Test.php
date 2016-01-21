@@ -119,6 +119,7 @@ class Test
 
   /**
    * @url GET something/{id1}/aa/{id2}
+   * @url GET zz/{$id3}/something/{id1}/aa/{id2}
    */
   function getSomething($id1, $id2)
   {
