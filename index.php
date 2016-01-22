@@ -23,6 +23,7 @@ Defaults::$accessControlAllowOrigin = '*';
 
 $r = new Restler();
 $r->addAPIClass('Test');
+$r->addAPIClass('Test2');
 $r->addAPIClass('Explorer');
 //$r->setAPIVersion(1);
 $r->addAuthenticationClass('Auth');
@@ -30,7 +31,7 @@ $r->addAPIClass('App');
 $r->addAPIClass('User');
 $r->addAPIClass('Bank');
 $r->addAPIClass('Coin');
-$r->addAPIClass('Order', '');
+$r->addAPIClass('Order');
 $r->addAPIClass('Category');
 $r->addAPIClass('Course');
 $r->addAPIClass('CourseSection');

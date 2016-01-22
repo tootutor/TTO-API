@@ -97,29 +97,28 @@ class Test
   }
 
   /**
-   * @url GET something/{id1}/aa
+   * @url GET something/aa/{id2}
    */
-  function getSomethingAll($id1)
+  function getSomethingAll($id2)
   {
   	$response = [];
-	$response[0] = new \stdClass();
-	$response[0]->id1 = 11;
-	$response[0]->id2 = 12;
-	$response[0]->data = 'DATA1';
-	$response[1] = new \stdClass();
-	$response[1]->id1 = 21;
-	$response[1]->id2 = 22;
-	$response[1]->data = 'DATA2';
-	$response[2] = new \stdClass();
-	$response[2]->id1 = 31;
-	$response[2]->id2 = 32;
-	$response[2]->data = 'DATA3';
+    $response[0] = new \stdClass();
+    $response[0]->id1 = 11;
+    $response[0]->id2 = 12;
+    $response[0]->data = 'DATA1';
+    $response[1] = new \stdClass();
+    $response[1]->id1 = 21;
+    $response[1]->id2 = 22;
+    $response[1]->data = 'DATA2';
+    $response[2] = new \stdClass();
+    $response[2]->id1 = 31;
+    $response[2]->id2 = 32;
+    $response[2]->data = 'DATA3';
   	return $response;
   }
 
   /**
    * @url GET something/{id1}/aa/{id2}
-   * @url GET zz/{$id3}/something/{id1}/aa/{id2}
    */
   function getSomething($id1, $id2)
   {
@@ -142,16 +141,24 @@ class Test
   }
 
   /**
-   * @url PUT /something/{id1}/aa/{id2}
+   * @url PUT /something/aa/{id2}
    */
-  function putSomething($id1, $id2, $data)
+  function putSomething1($id2, $data)
   {
   	$response = new \stdClass();
   	$response->action = 'PUT';
-  	$response->id1 = $id1;
+  	$response->id1 = '00001';
   	$response->id2 = $id2;
   	$response->data = $data;
   	return $response;
+  }
+  
+  /**
+   * @url PUT /something/{id1}/aa/{id2}
+   */
+  function putSomething2($id1, $id2, $data)
+  {
+  	return $this->putSomething1($id2, $data);
   }
 
   /**

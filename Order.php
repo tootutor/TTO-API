@@ -43,7 +43,7 @@ class Order
   }
 
 	/**
-	 * @url GET /order
+	 * @url GET
 	 */
   protected function getAllOrder()
   {
@@ -62,9 +62,9 @@ class Order
   }
 
 	/**
-	 * @url GET /user/{userId}/order
+	 * @url GET user/{userId}
 	 */
-  protected function getUserOrder($userId)
+  protected function getAllUserOrder($userId)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 	  	$statement = 'SELECT * FROM coin_order WHERE userId = :userId ORDER BY status DESC';
@@ -76,8 +76,8 @@ class Order
   }
 
 	/**
-   * @url PUT /order/{orderId}
-   * @url PUT /user/{userId}/order/{orderId}
+   * @url PUT {orderId}
+   * @url PUT {orderId}/user/{userId}
    */ 
   protected function putOrder($orderId, $userId, $bankId, $transferAmount, $transferDate)
   {
@@ -106,22 +106,30 @@ class Order
   }
 
 	/**
-   * @url DELETE /user/{userId}/order/{orderId}
+   * @url DELETE {orderId}
    */ 
-  protected function deleteOrder($orderId, $userId)
+  protected function deleteOrder($orderId)
+  {
+    $statement = 'DELETE order WHERE orderId = :orderId';
+    $bind = array('orderId' => $orderId);
+    $count = \Db::execute($statement, $bind);
+
+    \TTOMail::createAndSendAdmin('A user cancelled order', json_encode($bind));
+    
+    if ($count > 0) {
+      return;
+    } else {
+      throw new RestException(500, 'Cancel Error !!!');
+    }
+  }
+
+	/**
+   * @url DELETE {orderId}/user/{userId}
+   */ 
+  protected function deleteUserOrder($orderId, $userId)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
-	  	$statement = 'DELETE coin_order WHERE coinOrderId = :coinOrderId';
-	  	$bind = array('coinOrderId' => $coinOrderId);
-			$count = \Db::execute($statement, $bind);
-
-			\TTOMail::createAndSendAdmin('A user cancelled order', json_encode($bind));
-			
-			if ($count > 0) {
-		  	return;
-			} else {
-	  		throw new RestException(500, 'Cancel Error !!!');
-			}
+      $this->deleteOrder($orderId);
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
