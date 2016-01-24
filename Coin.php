@@ -77,8 +77,9 @@ class Coin
 
 	/**
 	 * @url GET mycoin/{userId}
+	 * @url GET user/{userId}
 	 */
-  protected function getMyCoin($userId)
+  protected function getUserCoin($userId)
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 	  	$statement = 'SELECT coin FROM user WHERE userId = :userId';
@@ -179,6 +180,10 @@ class Coin
   	}
   }
 	
+  /**
+   * @url GET
+   * @url GET allpackage
+   */ 
 	protected function getAllPackage() 
 	{
   	$statement = 'SELECT * FROM coin WHERE status = :status ORDER BY amount';

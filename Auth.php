@@ -78,6 +78,7 @@ class Auth implements iAuthenticate
 	  	$response = new \stdClass();
 	  	$response->userId = \TTO::getUserId();
 			$response->token  = \TTO::getToken();
+			$response->status  = \TTO::getStatus();
 			return $response;
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');

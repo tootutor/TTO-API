@@ -8,7 +8,7 @@ class User
 	 * @url POST
 	 */ 
 	function postRegister(
-				$email, $password, $firstname, $lastname, $nickname, $phone, $birthdate, $school, $province, $level, $purpose, $avatarId)
+		$email, $password, $firstname, $lastname, $nickname, $phone, $birthdate, $school, $province, $level, $purpose, $avatarId)
   {
   	//Hash password
   	$hash   = password_hash($password, PASSWORD_DEFAULT);
@@ -58,7 +58,7 @@ class User
   {
   	if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 	  	$statement = '
-        SELECT firstname, lastname, nickname, phone, birthdate, school, province, level, purpose, avatarId, coin, point
+        SELECT firstname, lastname, nickname, phone, birthdate, school, province, level, purpose, avatarId, coin, point, role, status
         FROM user WHERE userId = :userId
       ';
 	  	$bind = array('userId' => $userId);

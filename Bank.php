@@ -6,6 +6,7 @@ class Bank
   /**
    * @smart-auto-routing false
    * @url getallbank
+   * @url GET
    */ 
 	protected function getAllBank() 
 	{
