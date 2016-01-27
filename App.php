@@ -9,6 +9,7 @@ class App
 
 	/**
 	 * @url GET appinfo
+	 * @url GET
 	 */
   protected function getAppInfo()
   {

@@ -9,6 +9,7 @@ class Order
 
   /**
    * @url POST
+   * @url POST /user/{userId}
    */
   protected function postNewOrder($userId, $coin, $bonus, $amount)
   {
@@ -33,7 +34,7 @@ class Order
         $last_insert_id = \Db::getLastInsertId();
         $statement = 'SELECT * FROM `order` WHERE orderId = :orderId';
         $bind = array('orderId' => $last_insert_id);
-        return \Db::getResult($statement, $bind);
+        return \Db::getRow($statement, $bind);
       } else {
         throw new RestException(500, 'New Order Error !!!');
       }
