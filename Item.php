@@ -139,6 +139,26 @@ class Item
 	}
 
   /**
+   * @url GET user/{userId}
+   */ 
+	protected function getAllUserItem($userId, $sectionId) 
+	{
+    if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
+      $statement = '
+        SELECT I.* 
+        FROM item AS I
+        WHERE I.sectionId = :sectionId
+      ';
+      $bind = array('sectionId' => $sectionId);
+      return \Db::getResult($statement, $bind);
+    } else {
+      throw new RestException(401, 'No Authorize or Invalid request !!!');
+    }
+		return \Db::getResult($statement);
+	}
+  
+  
+  /**
    * @url GET item/{itemId}
    */ 
 	protected function getItem($itemId) 
