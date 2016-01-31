@@ -35,6 +35,7 @@ $r->addAPIClass('Order');
 $r->addAPIClass('Category');
 $r->addAPIClass('Course');
 $r->addAPIClass('CourseSection');
+$r->addAPIClass('Section');
 $r->addAPIClass('Item');
 $r->addAPIClass('CourseItem');
 $r->addAPIClass('UserCourse');
