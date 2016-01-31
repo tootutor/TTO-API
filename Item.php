@@ -145,8 +145,10 @@ class Item
 	{
     if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
       $statement = '
-        SELECT I.* 
+        SELECT I.*, IG.name AS itemGroup, IG.theme
         FROM item AS I
+        INNER JOIN item_group AS IG
+        ON IG.itemGroupId = I.itemGroupId
         WHERE I.sectionId = :sectionId
       ';
       $bind = array('sectionId' => $sectionId);
