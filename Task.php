@@ -8,98 +8,43 @@ class Task
 	 */
 
   /**
-   * @url POST
-   */ 
-	protected function postNewTask($code, $content, $rank, $taskTypeId, $sectionId) 
-	{
-  	if (\TTO::getRole() == 'admin') {
-			$statement = '
-				INSERT INTO task (code, content, rank, taskTypeId, sectionId)
-				VALUES (:code, :content, :taskTypeId)
-			';
-			$bind = array(
-        'code' => $code, 
-        'content' => $content, 
-        'rank' => $rank, 
-        'taskTypeId' => $taskTypeId
-        'sectionId' => $sectionId
-      );
-			$row_insert = \Db::execute($statement, $bind);
-			$taskId = \Db::getLastInsertId();
-
-	  	$response = new \stdClass();
-			$response->taskId = $taskId;
-			return $response;
-  	} else {
-  		throw new RestException(401, 'No Authorize or Invalid request !!!');
-  	}
-	}
-
-  /**
    * @url GET
    */ 
 	protected function getAllTask($sectionId) 
 	{
   	if (\TTO::getRole() == 'admin') {
-      $statement = 'SELECT * FROM task WHERE sectionId = :sectionId';
+      $statement = '
+        SELECT T.*, TT.name AS taskTypeName, TT.theme 
+        FROM task AS T
+        INNER JOIN task_type AS TT
+        ON TT.taskTypeId = T.taskTypeId
+        WHERE sectionId = :sectionId
+      ';
 			$bind = array('sectionId' => $sectionId);
-      
-      return \Db::getResult($statement);
+      return \Db::getResult($statement, $bind);
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
 	}
 
   /**
-   * @url GET /user/{userId}
+   * @url GET user/{userId}
    */ 
 	protected function getAllUserTask($userId, $sectionId) 
 	{
     if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
       $statement = '
-        SELECT T.*, UT.userId, UT.status, UT.point
+        SELECT T.*, TT.name AS taskTypeName, TT.theme 
         FROM task AS T
+        INNER JOIN task_type AS TT
+        ON TT.taskTypeId = T.taskTypeId
         LEFT OUTER JOIN user_task AS UT
         ON UT.taskId = T.taskId
         AND UT.userId = :userId
-        WHERE T.sectionId = :sectionId
+        WHERE sectionId = :sectionId
       ';
-			$bind = array(
-        'userId' => $userId
-        'sectionId' => $sectionId
-      );
-      return \Db::getResult($statement);
-  	} else {
-  		throw new RestException(401, 'No Authorize or Invalid request !!!');
-  	}
-	}
-  
-  /**
-   * @url PUT /{taskId}
-   * @url PUT /{taskId}/user/{userId}
-   */ 
-	protected function putUpdateTask($taskId, $code, $content, $rank, $taskTypeId, $sectionId) 
-	{
-  	if (\TTO::getRole() == 'admin') {
-			$statement = '
-				UPDATE task 
-				SET code        = :code, 
-				    content     = :content,
-				    rank        = :rank,
-				    itemTypeId  = :itemTypeId,
-				    sectionId   = :sectionId
-				WHERE taskId = :taskId
-			';
-	  	$bind = array(
-	  		'taskId'       => $taskId,
-	  		'code'         => $code,
-	  		'content'      => $content,
-	  		'rank'         => $content,
-	  		'itemTypeId'   => $itemTypeId,
-	  		'sectionId'    => $sectionId
-	  	);
-			\Db::execute($statement, $bind);
-			return;
+			$bind = array('userId' => $userId, 'sectionId' => $sectionId);
+      return \Db::getResult($statement, $bind);
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}

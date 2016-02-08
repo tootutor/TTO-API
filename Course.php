@@ -9,22 +9,11 @@ class Course
 
   /**
    * @url GET
-   * @url GET allcourse
    */ 
-  protected function getAllCourse() 
+  protected function getCourseList($categoryId) 
   {
-    $statement = 'SELECT * FROM view_course_summary WHERE status = :status';
-    $bind = array('status' => 'active');
-    return \Db::getResult($statement, $bind);
-  }
-
-  /**
-   * @url GET {courseId}
-   */ 
-  protected function getCourse($courseId) 
-  {
-    $statement = 'SELECT * FROM view_course_summary WHERE courseId = :courseId';
-    $bind = array('courseId' => $courseId);
+    $statement = 'SELECT * FROM course WHERE categoryId = :categoryId';
+    $bind = array('categoryId' => $categoryId);
     return \Db::getResult($statement, $bind);
   }
 
@@ -35,7 +24,7 @@ class Course
   {
     if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
       $statement = '
-        SELECT C.*, UC.coin, UC.point
+        SELECT C.*, UC.userId, UC.coin, UC.point
           FROM user_course AS UC
          INNER JOIN course AS C
             ON UC.courseId = C.courseId
@@ -49,6 +38,40 @@ class Course
     }
   }
   
-  
+  /**
+   * @url PUT /{courseId}
+   * @url PUT /{courseId}/user/{userId}
+   */ 
+  protected function updateCourse($courseId, $code, $categoryId, $name, $description, $coin, $status, $userId = null) 
+  {
+    if (\TTO::getRole() == 'admin') {
+      $statement = '
+        UPDATE course
+        SET 
+          code        = :code,
+          categoryId  = :categoryId,
+          name        = :name,
+          description = :description,
+          coin        = :coin,
+          status      = :status
+        WHERE
+          courseId    = :courseId
+      ';
+      $bind = array(
+        'courseId'    => $courseId,
+        'code'        => $code,
+        'categoryId'  => $categoryId,
+        'name'        => $name,
+        'description' => $description,
+        'coin'        => $coin,
+        'status'      => $status
+      );
+      $row_update = \Db::execute($statement, $bind);
+      return;
+    } else {
+      throw new RestException(401, 'No Authorize or Invalid request !!!');
+    }
+  }
+
 }
 
