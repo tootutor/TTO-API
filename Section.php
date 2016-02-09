@@ -33,9 +33,10 @@ class Section
 
   /**
    * @url PUT /{sectionId}
+   * @url PUT /{sectionId}/user
    * @url PUT /{sectionId}/user/{userId}
    */ 
-  protected function updateCourse($sectionId, $name, $description, $seq, $userId = null) 
+  protected function updateSection($sectionId, $name, $description, $seq, $userId = null) 
   {
     if (\TTO::getRole() == 'admin') {
       $statement = '

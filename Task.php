@@ -49,5 +49,67 @@ class Task
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
 	}
+
+  /**
+   * @url PUT /{taskId}
+   * @url PUT /{taskId}/user
+   * @url PUT /{taskId}/user/{userId}
+   */ 
+  protected function updateTask($taskId, $code, $content, $seq, $taskTypeId, $userId = null) 
+  {
+    if (\TTO::getRole() == 'admin') {
+      $statement = '
+        UPDATE task
+        SET 
+          code        = :code,
+          content     = :content,
+          seq         = :seq,
+          taskTypeId  = :taskTypeId
+        WHERE
+          taskId      = :taskId
+      ';
+      $bind = array(
+        'taskId'      => $taskId,
+        'code'        => $code,
+        'content'     => $content,
+        'seq'         => $seq,
+        'taskTypeId'  => $taskTypeId,
+      );
+      \Db::execute($statement, $bind);
+      return;
+    } else {
+      throw new RestException(401, 'No Authorize or Invalid request !!!');
+    }
+  }
+
+  /**
+   * @url POST
+   * @url POST /user/{userId}
+   */ 
+  protected function addTask($sectionId, $code, $content, $seq, $taskTypeId, $userId = null) 
+  {
+    if (\TTO::getRole() == 'admin') {
+      $statement = '
+        INSERT INTO task (sectionId, code, content, seq, taskTypeId)
+        VALUES (:sectionId, :code, :content, :seq, :taskTypeId)
+      ';
+      $bind = array(
+        'sectionId'  => $sectionId,
+        'code'       => $code,
+        'content'    => $content,
+        'seq'        => $seq,
+        'taskTypeId' => $taskTypeId
+      );
+      \Db::execute($statement, $bind);
+      $taskId = \Db::getLastInsertId();
+
+      $statement = 'SELECT * FROM task WHERE taskId = :taskId';
+      $bind = array('taskId' => $taskId);
+      return \Db::getRow($statement, $bind);
+      
+    } else {
+      throw new RestException(401, 'No Authorize or Invalid request !!!');
+    }
+  }
 	
 }
