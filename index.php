@@ -37,7 +37,7 @@ $r->addAPIClass('Course');
 $r->addAPIClass('CourseSection');
 $r->addAPIClass('Section');
 $r->addAPIClass('Task');
-//$r->addAPIClass('Item');
+$r->addAPIClass('Item');
 $r->addAPIClass('CourseItem');
 $r->addAPIClass('UserCourse');
 $r->addAPIClass('UserSection');

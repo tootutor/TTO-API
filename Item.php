@@ -38,8 +38,7 @@ class Item
   	if (\TTO::getRole() == 'admin') {
       $statement = 'SELECT * FROM item WHERE taskId = :taskId';
 			$bind = array('taskId' => $taskId);
-      
-      return \Db::getResult($statement);
+      return \Db::getResult($statement, $bind);
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
@@ -60,7 +59,7 @@ class Item
         WHERE I.taskId = :taskId
       ';
 			$bind = array(
-        'userId' => $userId
+        'userId' => $userId,
         'taskId' => $taskId
       );
       return \Db::getResult($statement);
