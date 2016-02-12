@@ -67,5 +67,34 @@ class Item
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
 	}
+
+  /**
+   * @url PUT /{itemId}
+   */ 
+	protected function updateItem($itemId, $seq, $itemTypeId, $code, $content) 
+	{
+  	if (\TTO::getRole() == 'admin') {
+			$statement = '
+        UPDATE item
+        SET
+          seq        = :seq,
+          itemTypeId = :itemTypeId,
+          code       = :code,
+          content    = :content
+        WHERE itemId = :itemId
+			';
+			$bind = array(
+        'itemId'     => $itemId,
+        'seq'        => $seq,
+        'itemTypeId' => $itemTypeId,
+        'code'       => $code,
+        'content'    => $content
+      );
+			\Db::execute($statement, $bind);
+			return;
+  	} else {
+  		throw new RestException(401, 'No Authorize or Invalid request !!!');
+  	}
+	}
 	
 }
