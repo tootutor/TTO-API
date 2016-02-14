@@ -10,18 +10,19 @@ class Item
   /**
    * @url POST
    */ 
-	protected function postNewItem($taskId, $userId, $status, $point) 
+	protected function postNewItem($taskId, $seq, $itemTypeId, $code, $content) 
 	{
   	if (\TTO::getRole() == 'admin') {
 			$statement = '
-				INSERT INTO item (taskId, userId, status, point)
-				VALUES (:taskId, :userId, :status, :point)
+				INSERT INTO item (taskId, seq, itemTypeId, code, content)
+				VALUES (:taskId, :seq, :itemTypeId, :code, :content)
 			';
 			$bind = array(
-        'taskId' => $taskId,
-        'userId' => $userId,
-        'status' => $status,
-        'point'  => $point
+        'taskId'     => $taskId,
+        'seq'        => $seq,
+        'itemTypeId' => $itemTypeId,
+        'code'       => $code,
+        'content'    => $content
       );
 			\Db::execute($statement, $bind);
 			return;
