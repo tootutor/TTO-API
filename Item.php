@@ -52,7 +52,7 @@ class Item
 	{
     if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
       $statement = '
-        SELECT I.*, UI.userId, UI.status, UI.point
+        SELECT I.*, UI.userId, UI.status, UI.point, UI.userContent
         FROM item AS I
         LEFT OUTER JOIN user_item AS UI
         ON UI.itemId = I.itemId
@@ -63,12 +63,35 @@ class Item
         'userId' => $userId,
         'taskId' => $taskId
       );
-      return \Db::getResult($statement);
+      return \Db::getResult($statement, $bind);
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
 	}
 
+  /**
+   * @url POST /user/{userId}
+   */ 
+	protected function postUserItem($userId, $taskId, $point, $userContent) 
+	{
+    if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
+			$statement = '
+				INSERT INTO user_item (taskId, userId, point, userContent)
+				VALUES (:taskId, :userId, :point, :userContent)
+			';
+			$bind = array(
+        'taskId'      => $taskId,
+        'userId'      => $userId,
+        'point'       => $point,
+        'userContent' => $userContent
+      );
+			\Db::execute($statement, $bind);
+			return;
+  	} else {
+  		throw new RestException(401, 'No Authorize or Invalid request !!!');
+  	}
+	}
+  
   /**
    * @url PUT /{itemId}
    */ 
