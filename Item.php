@@ -70,17 +70,17 @@ class Item
 	}
 
   /**
-   * @url POST /user/{userId}
+   * @url POST {itemId}/user/{userId}
    */ 
-	protected function postUserItem($userId, $taskId, $point, $userContent) 
+	protected function postUserItem($userId, $itemId, $point, $userContent) 
 	{
     if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
 			$statement = '
-				INSERT INTO user_item (taskId, userId, point, userContent)
-				VALUES (:taskId, :userId, :point, :userContent)
+				INSERT INTO user_item (itemId, userId, point, userContent)
+				VALUES (:itemId, :userId, :point, :userContent)
 			';
 			$bind = array(
-        'taskId'      => $taskId,
+        'itemId'      => $itemId,
         'userId'      => $userId,
         'point'       => $point,
         'userContent' => $userContent
