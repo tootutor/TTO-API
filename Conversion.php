@@ -1,34 +1,41 @@
 <?php
 use Luracast\Restler\RestException;
 
-class Task
+class Conversion
 {
 	/**
    * @smart-auto-routing false
 	 */
 
   /**
-   * @url GET /item
+   * @url GET /{itemTypeId}
    */ 
-	protected function getConvertItem() 
+	protected function getConvertItem($itemTypeId) 
 	{
   	if (\TTO::getRole() == 'admin') {
-      $statement = 'SELECT * FROM item WHERE itemTypeId = :itemTypeId';
+      $response = new \stdClass();
+      
+      $statement = 'SELECT itemId, code, content FROM item WHERE itemTypeId = :itemTypeId';
       $bind = array('itemTypeId' => $itemTypeId);
       $allItem = \Db::getResult($statement, $bind);
 
       foreach ($allItem as $item) {
-        if ($item['itemTypeId'] == 1) {
-          $statement = 'SELECT * FROM item_radio WHERE itemId = :itemId';
-          $bind = array('itemId' => $item['itemId']);
-          $allItemRadio = \Db::getResult($statement, $bind);
-          $item += array('allItemRadio' => $allItemRadio);
-        }
+        $newItem = new \stdClass();
+        $newItem->question = $item['content'];
+        $statement = 'SELECT content, isAnswer, point FROM item_radio WHERE itemId = :itemId';
+        $bind = array('itemId' => $item['itemId']);
+        $newItem->allRadio = \Db::getResult($statement, $bind);
+        $content2 = json_encode($newItem);
+        
+        $statement = '
+          UPDATE item
+          SET content2 = :content2
+          WHERE itemId = :itemId
+        ';
+        $bind = array('itemId' => $item['itemId'], 'content2' => $content2);
+        \Db::execute($statement, $bind);
       }
-      
-	  	$response = new \stdClass();
-			$response->insert_status = 'done';
-			return $response;
+			return;
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}
