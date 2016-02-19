@@ -28,7 +28,6 @@ $r->addAPIClass('Test2');
 $r->addAPIClass('Explorer');
 //$r->setAPIVersion(1);
 $r->addAuthenticationClass('Auth');
-/*
 $r->addAPIClass('App');
 $r->addAPIClass('User');
 $r->addAPIClass('Bank');
@@ -49,7 +48,6 @@ $r->addAPIClass('UserCourseItem');
 $r->addAPIClass('Comment');
 $r->addAPIClass('Notification');
 $r->addAPIClass('Email');
-*/
 $r->handle();
 
 ////////////////////// HTTP return code - http://www.restapitutorial.com/httpstatuscodes.html
