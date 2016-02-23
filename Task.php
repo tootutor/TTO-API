@@ -28,6 +28,26 @@ class Task
 	}
 
   /**
+   * @url GET {taskId}
+   */ 
+	protected function getTask($taskId) 
+	{
+  	if (\TTO::getRole() == 'admin') {
+      $statement = '
+        SELECT T.*, TT.name AS taskTypeName, TT.theme 
+        FROM task AS T
+        INNER JOIN task_type AS TT
+        ON TT.taskTypeId = T.taskTypeId
+        WHERE taskId = :taskId
+      ';
+			$bind = array('taskId' => $taskId);
+      return \Db::getRow($statement, $bind);
+  	} else {
+  		throw new RestException(401, 'No Authorize or Invalid request !!!');
+  	}
+	}
+  
+  /**
    * @url GET user/{userId}
    */ 
 	protected function getAllUserTask($userId, $sectionId) 
@@ -51,9 +71,32 @@ class Task
 	}
 
   /**
-   * @url PUT /{taskId}
-   * @url PUT /{taskId}/user
-   * @url PUT /{taskId}/user/{userId}
+   * @url GET {taskId}/user/{userId}
+   */
+	protected function getUserTask($userId, $taskId) 
+	{
+    if ($userId == \TTO::getUserId() || \TTO::getRole() == 'admin') {
+      $statement = '
+        SELECT T.*, TT.name AS taskTypeName, TT.theme 
+        FROM task AS T
+        INNER JOIN task_type AS TT
+        ON TT.taskTypeId = T.taskTypeId
+        LEFT OUTER JOIN user_task AS UT
+        ON UT.taskId = T.taskId
+        AND UT.userId = :userId
+        WHERE taskId = :taskId
+      ';
+			$bind = array('userId' => $userId, 'taskId' => $taskId);
+      return \Db::getRow($statement, $bind);
+  	} else {
+  		throw new RestException(401, 'No Authorize or Invalid request !!!');
+  	}
+	}
+
+  /**
+   * @url PUT {taskId}
+   * @url PUT {taskId}/user
+   * @url PUT {taskId}/user/{userId}
    */ 
   protected function updateTask($taskId, $code, $content, $seq, $taskTypeId, $userId = null) 
   {
@@ -84,7 +127,7 @@ class Task
 
   /**
    * @url POST
-   * @url POST /user/{userId}
+   * @url POST user/{userId}
    */ 
   protected function addTask($sectionId, $code, $content, $seq, $taskTypeId, $userId = null) 
   {
