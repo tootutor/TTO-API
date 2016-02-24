@@ -173,4 +173,16 @@ class Test
   	return $response;
   }
 
+  /**
+   * @url PATCH /something/{id1}
+   */
+  protected function changeSomething($id1, $id2 = NULL, $id3 = NULL)
+  {
+  	$response = new \stdClass();
+  	$response->action = 'PATCH';
+  	$response->id1 = $id1;
+  	$response->id2 = $id2;
+  	$response->id3 = $id3;
+  	return $response;
+  }
 }
