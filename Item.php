@@ -37,9 +37,14 @@ class Item
 	protected function getAllItem($taskId) 
 	{
   	if (\TTO::getRole() == 'admin') {
-      $statement = 'SELECT * FROM item WHERE taskId = :taskId';
-			$bind = array('taskId' => $taskId);
-      return \Db::getResult($statement, $bind);
+      if ($taskId > 0) {
+        $statement = 'SELECT * FROM item WHERE taskId = :taskId';
+        $bind = array('taskId' => $taskId);
+        return \Db::getResult($statement, $bind);
+      } else {
+        $statement = 'SELECT * FROM item';
+        return \Db::getResult($statement);
+      }
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}

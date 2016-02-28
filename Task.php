@@ -13,15 +13,25 @@ class Task
 	protected function getAllTask($sectionId) 
 	{
   	if (\TTO::getRole() == 'admin') {
-      $statement = '
-        SELECT T.*, TT.name AS taskTypeName, TT.theme 
-        FROM task AS T
-        INNER JOIN task_type AS TT
-        ON TT.taskTypeId = T.taskTypeId
-        WHERE sectionId = :sectionId
-      ';
-			$bind = array('sectionId' => $sectionId);
-      return \Db::getResult($statement, $bind);
+      if ($sectionId > 0) {
+        $statement = '
+          SELECT T.*, TT.name AS taskTypeName, TT.theme 
+          FROM task AS T
+          INNER JOIN task_type AS TT
+          ON TT.taskTypeId = T.taskTypeId
+          WHERE sectionId = :sectionId
+        ';
+        $bind = array('sectionId' => $sectionId);
+        return \Db::getResult($statement, $bind);
+      } else {
+        $statement = '
+          SELECT T.*, TT.name AS taskTypeName, TT.theme 
+          FROM task AS T
+          INNER JOIN task_type AS TT
+          ON TT.taskTypeId = T.taskTypeId
+        ';
+        return \Db::getResult($statement);
+      }
   	} else {
   		throw new RestException(401, 'No Authorize or Invalid request !!!');
   	}

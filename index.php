@@ -24,7 +24,6 @@ Defaults::$accessControlAllowOrigin = '*';
 $r = new Restler();
 $r->addAPIClass('Conversion');
 $r->addAPIClass('Test');
-$r->addAPIClass('Test2');
 $r->addAPIClass('Explorer');
 //$r->setAPIVersion(1);
 $r->addAuthenticationClass('Auth');
