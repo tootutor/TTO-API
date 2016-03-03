@@ -94,7 +94,7 @@ class Task
         LEFT OUTER JOIN user_task AS UT
         ON UT.taskId = T.taskId
         AND UT.userId = :userId
-        WHERE taskId = :taskId
+        WHERE T.taskId = :taskId
       ';
 			$bind = array('userId' => $userId, 'taskId' => $taskId);
       return \Db::getRow($statement, $bind);
